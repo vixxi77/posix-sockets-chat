@@ -2,14 +2,18 @@ CC = gcc
 
 STD = -std=c99
 
-CFLAGS = $(shell sdl2-config --cflags --libs)
+CFLAGS = -Wall -Wextra $(STD) $(shell sdl2-config --cflags)
+
+LDFLAGS = $(shell sdl2-config --libs)
 
 SRC = $(wildcard src/*.c)
 
 TARGET = client
 
-all:
-	$(CC) $(SRC) $(STD) $(CFLAGS) -o $(TARGET)
+all: $(TARGET)
+
+$(TARGET):
+	$(CC) $(SRC) $(CFLAGS) $(LDFLAGS) -o $(TARGET)
 
 run:
 	./$(TARGET)
