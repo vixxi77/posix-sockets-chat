@@ -2,6 +2,18 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
+/*
+TESTING PLACEHOLDER
+SDL_Rect cursor_placeholder = {
+	 10,
+       	 760,
+       	 10,
+       	 30
+};
+*/
+	
+
+
 
 int initalization(App *app){
 	if(SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -50,8 +62,47 @@ void sdl_loop(App *app){
 	}
 }
 
+//THIS IS ALSO TESTING PLACEHOLDER
+void input_box(App *app){
+	SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
+	SDL_RenderDrawLine(app->renderer, 0, 750, 800, 750);
+}
+
+/*
+TESTING PLACEHOLDER
+void cursor(App *app, SDL_Rect *cursor){
+	SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(app->renderer, cursor);
+}
+
+int cursor_blink(void){
+	static int on = 1;
+	static Uint32 last_toggle = 0;
+
+	Uint32 now = SDL_GetTicks();
+
+	if (now - last_toggle > 500){
+		on = !on;
+		last_toggle = now;
+	}
+
+	return on;
+}
+*/
+
 void frame_render(App *app){
 	clear_screen(app);
+
+	//TESTING PLACEHOLDER
+	input_box(app);
+	
+	/*
+	TESTING PLACEHOLDER
+	if(cursor_blink()){
+		cursor(app, &cursor_placeholder);
+	}
+	*/
+
 	SDL_RenderPresent(app->renderer);
 	SDL_Delay(1000/FPS);
 }
