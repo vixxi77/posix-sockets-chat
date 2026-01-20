@@ -19,4 +19,4 @@ run:
 	./$(TARGET)
 
 clean:
-	rm $(TARGET)
+	rm -f $(TARGET)
