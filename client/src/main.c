@@ -1,5 +1,5 @@
-#include "../include/window.h"
-#include "../include/client_network.h"
+#include "window.h"
+#include "client_network.h"
 #include <stdlib.h>
 
 

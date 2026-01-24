@@ -2,7 +2,7 @@ CC = gcc
 
 STD = -std=c99
 
-CFLAGS = -Wall -Wextra $(STD)
+CFLAGS = -Wall -Wextra $(STD) -Iinclude
 
 SRC = $(wildcard src/*.c)
 

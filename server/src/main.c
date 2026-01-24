@@ -1,4 +1,4 @@
-#include "../include/server_network.h"
+#include "server_network.h"
 
 int main(void){
 	server_socket("its a server");
