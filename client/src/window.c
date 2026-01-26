@@ -18,28 +18,37 @@ SDL_Rect cursor_placeholder = {
 int initalization(App *app){
 	if(SDL_Init(SDL_INIT_VIDEO) != 0){
 		printf("failed initalization %s", SDL_GetError());
-		return 1;
+		return -1;
 	}
 
 	app->window = SDL_CreateWindow("Chat", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	
 	if(app->window == NULL){
 		printf("failed creating window %s", SDL_GetError());
-		return 1;
+		cleanup(app);
+		return -1;
 	}
 
 	app->renderer = SDL_CreateRenderer(app->window, -1, 0);
 
 	if(app->renderer == NULL){
 		printf("failed creating renderer %s", SDL_GetError());
-		return 1;
+		cleanup(app);
+		return -1;
 	}
 	return 0;
 }
 
 void cleanup(App *app){
-	SDL_DestroyRenderer(app->renderer);
-	SDL_DestroyWindow(app->window);
+	if(app->renderer){
+		SDL_DestroyRenderer(app->renderer);
+		app->renderer = NULL;
+	}
+
+	if(app->window){
+		SDL_DestroyWindow(app->window);
+		app->window = NULL;
+	}
 	SDL_Quit();
 }
 
@@ -48,18 +57,14 @@ void clear_screen(App *app){
 	SDL_RenderClear(app->renderer);
 }
 
-void sdl_loop(App *app){
-	int run = 1;
-	while(run){
-		while(SDL_PollEvent(&app->event)){
-			switch(app->event.type){
-			case SDL_QUIT:
-				run = 0;
-				break;
-			}
+void sdl_frame(App *app){
+	SDL_Event event;
+	while(SDL_PollEvent(&event)){
+		if(event.type == SDL_QUIT){
+			app->running = 0;
 		}
-		frame_render(app);
 	}
+	frame_render(app);
 }
 
 //THIS IS ALSO TESTING PLACEHOLDER

@@ -9,14 +9,14 @@
 
 typedef struct {
 	SDL_Window   *window;
-	SDL_Event     event;
 	SDL_Renderer *renderer;
+	int running;
 }App;
 
 int initalization(App *app);
 void cleanup(App *app);
 void clear_screen(App *app);
-void sdl_loop(App *app);
+void sdl_frame(App *app);
 void frame_render(App *app);
 
 void input_box(App *app);
