@@ -11,9 +11,6 @@ SDL_Rect cursor_placeholder = {
        	 30
 };
 */
-	
-
-
 
 int initalization(App *app){
 	if(SDL_Init(SDL_INIT_VIDEO) != 0){
