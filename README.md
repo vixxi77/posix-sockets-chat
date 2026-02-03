@@ -4,6 +4,11 @@
     <img src="misc/client_app.gif" width="600">
 </p>
 
+## HIGH-LEVEL ARCHITECTURE
+<p align="center">
+    <img src="misc/architecture.jpg" width="600">
+</p>
+
 ## DEPENDENCIES
 ### CLIENT
 - SDL2 (windowing & rendering)
