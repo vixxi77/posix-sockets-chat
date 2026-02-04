@@ -8,18 +8,24 @@
 
 SDL_Rect cursor_placeholder = {
 	 10,
-       	 760,
+       	 765,
        	 10,
-       	 30
+       	 20
 };
+
+SDL_Rect input = {0};
+
+
 
 
 static TTF_Font *default_font;
 static SDL_Color white = {255, 255, 255, 255};
+static char TEXT_BUFFER[1024] = {0};
 
 void splash_screen(SDL_Renderer *renderer);
 void render_helper_text(SDL_Renderer *renderer, TTF_Font *font,  const char *text, int y, SDL_Color color);
-void cursor(SDL_Renderer *renderer, SDL_Rect *cursor);
+void render_input_text(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect *rect, char *text, int y, SDL_Color);
+void cursor(SDL_Renderer *renderer, SDL_Rect *cursor, const SDL_Rect *input_offset);
 int cursor_blink(void);
 
 int initalization(App *app){
@@ -54,7 +60,7 @@ int initalization(App *app){
 		return -1;
 	}
 	
-	default_font = TTF_OpenFont("./assets/FSEX300.ttf", 16);
+	default_font = TTF_OpenFont("./assets/FSEX300.ttf", 18);
 	if(!default_font){
 		printf("cant load font");
 		return -1;
@@ -86,20 +92,17 @@ void sdl_frame(App *app){
 	SDL_Event event;
 	
 	SDL_StartTextInput();
-	char text[1024] = {0};
 
 	while(SDL_PollEvent(&event)){
 		if(event.type == SDL_QUIT){
 			app->running = 0;
 		}else if(event.type == SDL_TEXTINPUT || event.type == SDL_KEYDOWN){
-			if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && strlen(text) > 0){
-				text[strlen(text) - 1] = '\0';
+			if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && strlen(TEXT_BUFFER) > 0){
+				TEXT_BUFFER[strlen(TEXT_BUFFER) - 1] = '\0';
 			}else if(event.type == SDL_TEXTINPUT){
-				strncat(text, event.text.text, sizeof(text) - strlen(text) - 1);
+				strncat(TEXT_BUFFER, event.text.text, sizeof(TEXT_BUFFER) - strlen(TEXT_BUFFER) - 1);
 			}
 		}
-		printf("%s\033[K", text);
-		fflush(stdout);
 	}
 	frame_render(app);
 }
@@ -116,18 +119,12 @@ void frame_render(App *app){
 	render_helper_text(app->renderer, default_font, "type  :create <Room Name>  to create a room", 540, white);
 	render_helper_text(app->renderer, default_font, "type  :join   <Room Code>  to enter a room ", 560, white);
 	render_helper_text(app->renderer, default_font, "type  :leave               to leave a room ", 580, white);
+	render_input_text(app->renderer, default_font, &input, TEXT_BUFFER, 766, white);
 
 	if(cursor_blink()){
-		cursor(app->renderer, &cursor_placeholder);
+		cursor(app->renderer, &cursor_placeholder, &input);
 	}
 	
-	/*
-	TESTING PLACEHOLDER
-	if(cursor_blink()){
-		cursor(app, &cursor_placeholder);
-	}
-	*/
-
 	SDL_RenderPresent(app->renderer);
 	SDL_Delay(1000/FPS);
 }
@@ -183,12 +180,52 @@ void render_helper_text(SDL_Renderer *renderer, TTF_Font *font, const char *text
 	SDL_FreeSurface(surface);
 }
 
-void cursor(SDL_Renderer *renderer, SDL_Rect *cursor){
+void render_input_text(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect *rect, char *text, int y, SDL_Color color){
+
+	if(!font || !text || text[0] == '\0'){
+		rect->w = 0;
+		return;
+	} 
+
+	SDL_Surface *surface;
+	
+	surface = TTF_RenderText_Solid(font, text, color);
+	if(!surface){
+		printf("TTF Render error %s \n", TTF_GetError());
+		return;
+	}
+
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+	if(!texture){
+		printf("SDL Surface error %s", SDL_GetError());
+		SDL_FreeSurface(surface);
+		return;
+	}
+
+	int textHeight, textWidth;
+	TTF_SizeText(font, text, &textWidth, &textHeight);
+	int x = 10;
+	rect->x = x;
+	rect->y = y;
+	rect->w = textWidth;
+	rect->h = textHeight;
+
+	SDL_RenderCopy(renderer, texture, NULL, rect);
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
+}
+
+void cursor(SDL_Renderer *renderer, SDL_Rect *cursor, const SDL_Rect *input_offset){
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	if(input_offset->w > 0){
+		cursor->x = input_offset->w + 10;
+	}else{
+		cursor->x = 10;
+	}
 	SDL_RenderFillRect(renderer, cursor);
 }
 
-int cursor_blink(void){
+int cursor_blink(){
 	static int on = 1;
 	static Uint32 last_toggle = 0;
 
