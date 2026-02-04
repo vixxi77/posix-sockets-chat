@@ -1,7 +1,7 @@
 # POSIX C SOCKET CHAT APP
 
 <p align="center">
-    <img src="misc/client_app.gif" width="600">
+    <img src="misc/saturn_app.gif" width="600">
 </p>
 
 ## HIGH-LEVEL ARCHITECTURE
