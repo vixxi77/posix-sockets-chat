@@ -27,3 +27,6 @@
 - C-Posix-Sockets
 - Posix-pthreads
 - Hosted on a VPS 
+
+## SOURCES
+- [Beej's Guide To Posix Sockets](https://beej.us/guide/bgnet/html/)

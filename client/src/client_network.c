@@ -1,5 +1,8 @@
 #include "window.h"
+
 #include <stdio.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 
 static void message_log(int log);
 
@@ -8,7 +11,6 @@ void *client_socket(void *arg){
 
 	message_log(1);
 	while(app->running){
-	message_log(2);
 	}
 	message_log(0);
 

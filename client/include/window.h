@@ -19,7 +19,7 @@ void clear_screen(App *app);
 void sdl_frame(App *app);
 void frame_render(App *app);
 
-void input_box(App *app);
+void input_box(SDL_Renderer *renderer);
 
 #endif
 
