@@ -7,6 +7,7 @@
 
 #define CENTERED 1
 #define MAX_CHARACTERS 1024
+#define TARGET_MS (1000/FPS)
 
 
 SDL_Rect cursor_placeholder = {
@@ -20,6 +21,7 @@ SDL_Rect input = {0};
 
 
 static TTF_Font *default_font;
+static SDL_Texture *splash_texture = NULL;
 static SDL_Color white = {255, 255, 255, 255};
 static char TEXT_BUFFER[MAX_CHARACTERS] = {0};
 
@@ -80,6 +82,22 @@ int initalization(App *app){
 		printf("cant load font");
 		return -1;
 	}
+
+	SDL_Surface *splash = IMG_Load("./assets/black_saturn_400.png");
+	if(!splash){
+		printf("cant load the splash image");
+		return -1;
+	}
+
+	splash_texture = SDL_CreateTextureFromSurface(app->renderer, splash);
+	SDL_FreeSurface(splash);
+	if(!splash_texture){
+		printf("failed to create splash");
+		return -1;
+	}
+
+	SDL_StartTextInput();
+	
 	return 0;
 }
 
@@ -93,6 +111,17 @@ void cleanup(App *app){
 		SDL_DestroyWindow(app->window);
 		app->window = NULL;
 	}
+
+	if(default_font){
+		TTF_CloseFont(default_font);
+		default_font = NULL;
+	}
+
+	if(splash_texture){
+		SDL_DestroyTexture(splash_texture);
+		splash_texture = NULL;
+	}
+
 	IMG_Quit();
 	TTF_Quit();
 	SDL_Quit();
@@ -104,9 +133,9 @@ void clear_screen(App *app){
 }
 
 void sdl_frame(App *app){
+	Uint32 frame_start = SDL_GetTicks();
+
 	SDL_Event event;
-	
-	SDL_StartTextInput();
 
 	while(SDL_PollEvent(&event)){
 		if(event.type == SDL_QUIT){
@@ -120,6 +149,11 @@ void sdl_frame(App *app){
 		}
 	}
 	frame_render(app);
+
+	Uint32 frame_time = SDL_GetTicks() - frame_start;
+	if(frame_time < TARGET_MS){
+		SDL_Delay(TARGET_MS - frame_time);
+	}
 }
 
 void frame_render(App *app){
@@ -143,7 +177,6 @@ void frame_render(App *app){
 	}
 	
 	SDL_RenderPresent(app->renderer);
-	SDL_Delay(1000/FPS);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -159,16 +192,11 @@ void input_box(SDL_Renderer *renderer){
 }
 
 void splash_screen(SDL_Renderer *renderer){
-	SDL_Surface *splash;
 	SDL_Rect rect = {100, 20, 600, 600};
-	splash = IMG_Load("./assets/black_saturn_400.png");
-	if(!splash){
+	if(!splash_texture){
 		printf("cant load the image \n");
 	}
-	SDL_Texture *PNG = SDL_CreateTextureFromSurface(renderer, splash);
-	SDL_RenderCopy(renderer, PNG, NULL, &rect);
-	SDL_DestroyTexture(PNG);
-	SDL_FreeSurface(splash);
+	SDL_RenderCopy(renderer, splash_texture, NULL, &rect);
 }
 
 void render_helper_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int y, SDL_Color color, int bound_width, int bound_height, int local_y, int alignment){
