@@ -1,4 +1,5 @@
 compile_commands.json
-server/.cache/*
-.cache/*
+.cache/
+server/.cache/
+client/.cache/
 

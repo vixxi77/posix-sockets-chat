@@ -1,32 +1,29 @@
 #include "window.h"
+#include "network_core.h"
 
-#include <stdio.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-static void message_log(int log);
-
 void *client_socket(void *arg){
 	App *app = arg;	
+	
+	struct sockaddr_in address;
 
-	message_log(1);
+	int socketfd = socket_init(&address);
+	
+
 	while(app->running){
+		if(socketfd < 0){
+			if(socket_retry(5)){
+				socketfd = socket_init(&address);
+			}
+		}
+
+		socket_loop(socketfd);
 	}
-	message_log(0);
+
+	socket_cleanup(&socketfd);
 
 	return NULL;
 }
 
-void message_log(int log){
-	switch(log){
-	case 1:
-		printf("CLIENT NETWORK THREAD HAS STARTED ! \n");
-		break;
-	case 0:
-		printf("CLIENT NETWORK THREAD EXITING... \n");
-		break;
-	case 2:
-		printf("\rNETWORK IS LISTENING...");
-		fflush(stdout);
-	}
-}
