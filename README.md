@@ -5,13 +5,13 @@
 </p>
 
 ## HIGH-LEVEL ARCHITECTURE
+
+- version 1 (naive client per thread)
 <p align="center">
-    
-    - version 1 (naive client per thread)
     <img src="misc/architecture.jpg" width="600">
-    
-    - version 2 (polling blocking functions wiht epoll and nonblocking sockets)
 </p>
+
+- version 2 (polling blocking functions wiht epoll and nonblocking sockets)
 
 ## DEPENDENCIES
 ### CLIENT
