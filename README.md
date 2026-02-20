@@ -6,7 +6,9 @@
 
 ## HIGH-LEVEL ARCHITECTURE
 <p align="center">
+    - version 1 (naive client per thread)
     <img src="misc/architecture.jpg" width="600">
+    - version 2 (polling blocking functions wiht epoll and nonblocking sockets)
 </p>
 
 ## DEPENDENCIES
