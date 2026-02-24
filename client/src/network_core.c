@@ -26,9 +26,10 @@ int socket_init(struct sockaddr_in *address){
 	int connection_status = connect(socketfd, (struct sockaddr*)address, sizeof(*address));
 	if(connection_status == -1){
 		printf("cant establish a connection.. Will retry.. \n");
+		close(socketfd);
 		return -1;
 	}
-
+	
 	return socketfd;
 }
 
