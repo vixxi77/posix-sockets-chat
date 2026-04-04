@@ -34,3 +34,4 @@
 
 ## SOURCES
 - [Beej's Guide To Posix Sockets](https://beej.us/guide/bgnet/html/)
+- I really hope i'll finish this completely one day
